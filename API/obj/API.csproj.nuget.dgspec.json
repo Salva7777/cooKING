@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\salva\\source\\repos\\cooking\\API\\API.csproj": {}
+    "C:\\Users\\salva\\source\\repos\\cooking\\api\\API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\salva\\source\\repos\\cooking\\API\\API.csproj": {
+    "C:\\Users\\salva\\source\\repos\\cooking\\api\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\salva\\source\\repos\\cooking\\API\\API.csproj",
+        "projectUniqueName": "C:\\Users\\salva\\source\\repos\\cooking\\api\\API.csproj",
         "projectName": "API",
-        "projectPath": "C:\\Users\\salva\\source\\repos\\cooking\\API\\API.csproj",
+        "projectPath": "C:\\Users\\salva\\source\\repos\\cooking\\api\\API.csproj",
         "packagesPath": "C:\\Users\\salva\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\salva\\source\\repos\\cooking\\API\\obj\\",
+        "outputPath": "C:\\Users\\salva\\source\\repos\\cooking\\api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\salva\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -44,6 +44,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "MediatR.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[10.0.1, )"
+            },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
@@ -119,6 +123,16 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
+          "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[11.0.0, )"
+            },
+            "MediatR.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[10.0.1, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
