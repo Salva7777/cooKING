@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Extensions;
 using Application.Core;
 using Application.Recipes;
 using MediatR;
@@ -33,17 +34,8 @@ namespace API
         {
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIv5", Version = "v1" });
-            });
-            services.AddDbContext<DataContext>(opt =>
-            {
-                opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
-            });
-            //adicionar o cors para ligar o client à API
-            services.AddMediatR(typeof(List.Handler).Assembly);
-            services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+            //Movido para outro ficheiro para limpar o startup
+            services.AddApplicationServices(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +49,7 @@ namespace API
             }
 
             app.UseHttpsRedirection();
+            app.UseCors("CorsPolicy");
 
             app.UseRouting();
 

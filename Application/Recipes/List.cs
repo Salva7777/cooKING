@@ -1,6 +1,7 @@
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Persistence;
 
 namespace Application.Recipes
@@ -17,7 +18,9 @@ namespace Application.Recipes
                 _context = context;
             }
 
-            public async Task<List<Recipe>> Handle(Query request, CancellationToken cancellationToken){
+            public async Task<List<Recipe>> Handle(Query request, CancellationToken cancellationToken)
+            {
+
                 return await _context.Recipes.ToListAsync();
             }
         }
