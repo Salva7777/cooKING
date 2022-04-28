@@ -4,15 +4,11 @@ import { Recipe } from "../../../app/models/recipe";
 import RecipeDetails from "../details/RecipeDetails";
 import RecipeList from "./RecipeList";
 
-interface Props {
-    recipes: Recipe[]
-}
-
-export default function RecipeDashBoard({ recipes }: Props) {
+export default function RecipeDashBoard() {
     return (
         <Grid>
             <Grid.Column width='10'>
-                <RecipeList recipes={recipes} />
+                <RecipeList/>
             </Grid.Column>
         </Grid>
     )

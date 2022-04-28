@@ -2,24 +2,24 @@
 //duration porque nao existe nenhum datatype para Timespan
 
 export interface Duration {
-    ticks: number;
-    days: number;
-    hours: number;
-    milliseconds: number;
-    minutes: number;
-    seconds: number;
-    totalDays: number;
-    totalHours: number;
-    totalMilliseconds: number;
-    totalMinutes: number;
-    totalSeconds: number;
+    ticks: number | undefined;
+    days: number | undefined;
+    hours: number | undefined;
+    milliseconds: number | undefined;
+    minutes: number | undefined;
+    seconds: number | undefined;
+    totalDays: number | undefined;
+    totalHours: number | undefined;
+    totalMilliseconds: number | undefined;
+    totalMinutes: number | undefined;
+    totalSeconds: number | undefined;
 }
 
 export interface Recipe {
     id: string;
     title: string;
     difficulty: string;
-    duration: Duration;
-    createdAt: Date;
+    duration: Duration | any | null;
+    createdAt: Date | null;
 }
 

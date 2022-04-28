@@ -8,6 +8,6 @@ namespace Domain
         public string Title { get; set; }
         public string Difficulty { get; set; }
         public TimeSpan Duration { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

@@ -1,15 +1,17 @@
+import { observer } from "mobx-react-lite";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
 import { Recipe } from "../../../app/models/recipe";
+import { useStore } from "../../../app/stores/store";
 import RecipeDetails from "../details/RecipeDetails";
-interface Props {
-    recipes: Recipe[]
-}
-export default function RecipeList({ recipes }: Props) {
+
+export default observer(function RecipeList() {
+    const {recipeStore} = useStore();
+    const {recipesById} = recipeStore;
     let tags = ["lorem", "lorem", "lorem", "lorem", "lorem", "lorem", "lorem", "lorem", "lorem", "lorem", "lorem", "lorem", "lorem", "lorem",]
     return (
         <Segment>
             <Item.Group divided>
-                {recipes.map((recipe, index) => (
+                {recipesById.map((recipe, index) => (
                     <Item key={recipe.id}>
                         <Item.Image src="https://react.semantic-ui.com/images/wireframe/image.png" alt="recipe image" size="small" />
                         <Item.Content>
@@ -19,6 +21,7 @@ export default function RecipeList({ recipes }: Props) {
                                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Delectus aperiam quos non molestiae quaerat et consequuntur laudantium impedit quisquam, dolores sapiente. Nisi nemo laborum velit eum perspiciatis accusamus ad qui.
                             </Item.Description>
                             <Item.Extra>
+                                {recipe.duration}
                                 <Button floated='right' content='Check Recipe' color='black'/>
                                 {/* <RecipeDetails recipe={recipes[index]} /> */}
                             </Item.Extra>
@@ -28,4 +31,4 @@ export default function RecipeList({ recipes }: Props) {
             </Item.Group>
         </Segment>
     )
-}
+})

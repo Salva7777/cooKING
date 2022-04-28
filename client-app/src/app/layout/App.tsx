@@ -1,25 +1,29 @@
-import axios from "axios";
-import { Fragment, useEffect, useState } from "react";
-import { Container, Header, List } from "semantic-ui-react";
+import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
+import { Route } from "react-router-dom";
+import { Container } from "semantic-ui-react";
+import HomePage from "../../features/home/HomePage";
 import RecipeDashBoard from "../../features/recipes/dashboard/RecipeDashboard";
-import agent from "../api/agent";
-import { Recipe } from '../models/recipe'
+import RecipeForm from "../../features/recipes/form/RecipeForm";
+import { useStore } from "../stores/store";
+import LoadingComponent from "./LoadingComponent";
 import NavBar from "./NavBar";
 
 function App() {
-  const [recipes, setRecipes] = useState<Recipe[]>([])
-
+  const { recipeStore } = useStore();
   useEffect(() => {
-    agent.Recipes.list().then(Response => {
-      setRecipes(Response);
-    })
-  }, [])
-  return (<>
-    <NavBar />
-    <Container style={{ marginTop: '7em' }}>
-      <RecipeDashBoard recipes={recipes} />
-    </Container>
-  </>
+    recipeStore.loadRecipes();
+  }, [recipeStore])
+  if (recipeStore.loadingInitial) return <LoadingComponent content='Loading app...' />
+  return (
+    <>
+      <NavBar />
+      <Container style={{ marginTop: '7em' }}>
+        <Route exact path='/' component={HomePage} />
+        <Route path='/recipes' component={RecipeDashBoard} />
+        <Route path='/createrecipe' component={RecipeForm} />
+      </Container>
+    </>
   );
 }
-export default App;
+export default observer(App);
