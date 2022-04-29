@@ -3,16 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain;
+using Microsoft.AspNetCore.Identity;
 
 namespace Persistence
 {
     public class Seed
     {
         //SEED DATA INTO TABLE
-        public static async Task SeedData(DataContext context)
+        public static async Task SeedData(DataContext context, UserManager<AppUser> userManager)
         {
+            if (!userManager.Users.Any())
+            {
+                var users = new List<AppUser>
+                {
+                    new AppUser{
+                        DisplayName="Salvador",
+                        UserName="salvador",
+                        Email="salvador@test.com"
+                    }
+                };
+
+                foreach (var user in users)
+                {
+                    await userManager.CreateAsync(user, "Pa$$w0rd");
+                }
+            }
             //SE A TABELA JA TIVER DADOS
-            if(context.Recipes.Any()) return; // NADA
+            if (context.Recipes.Any()) return; // NADA
             //LISTA DE OBJETOS
             var recipes = new List<Recipe>
             {
