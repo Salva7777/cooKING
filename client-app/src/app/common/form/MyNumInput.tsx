@@ -5,9 +5,9 @@ interface Props {
     placeholder: string;
     name: string;
     label?:string;
-    max: number;
-    min: number;
-    value: number | undefined;
+    max?: number;
+    min?: number;
+    value?: number;
 }
 
 export default function MyNumInput(props: Props) {

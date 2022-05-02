@@ -1,29 +1,57 @@
-import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
-import { Route } from "react-router-dom";
-import { Container } from "semantic-ui-react";
-import HomePage from "../../features/home/HomePage";
-import RecipeDashBoard from "../../features/recipes/dashboard/RecipeDashboard";
-import RecipeForm from "../../features/recipes/form/RecipeForm";
-import { useStore } from "../stores/store";
-import LoadingComponent from "./LoadingComponent";
-import NavBar from "./NavBar";
+import { useEffect } from 'react';
+import { Container } from 'semantic-ui-react';
+import NavBar from './NavBar';
+import RecipeDashboard from '../../features/recipes/dashboard/RecipeDashboard';
+import { observer } from 'mobx-react-lite';
+import { Route, Switch, useLocation } from 'react-router-dom';
+import HomePage from '../../features/home/HomePage';
+import RecipeForm from '../../features/recipes/form/RecipeForm';
+import TestErrors from '../../features/errors/TestError';
+import { ToastContainer } from 'react-toastify';
+import NotFound from '../../features/errors/NotFound';
+import ServerError from '../../features/errors/ServerError';
+import LoginForm from '../../features/users/LoginForm';
+import { useStore } from '../stores/store';
+import LoadingComponent from './LoadingComponent';
 
 function App() {
-  const { recipeStore } = useStore();
+  const location = useLocation();
+  const { commonStore, userStore } = useStore();
+
   useEffect(() => {
-    recipeStore.loadRecipes();
-  }, [recipeStore])
-  if (recipeStore.loadingInitial) return <LoadingComponent content='Loading app...' />
+    if (commonStore.token) {
+      userStore.getUser().finally(() => commonStore.setAppLoaded());
+    } else {
+      commonStore.setAppLoaded();
+    }
+  }, [commonStore, userStore])
+
+  if (!commonStore.appLoaded) return <LoadingComponent content='Loading app...' />
+
   return (
     <>
-      <NavBar />
-      <Container style={{ marginTop: '7em' }}>
-        <Route exact path='/' component={HomePage} />
-        <Route path='/recipes' component={RecipeDashBoard} />
-        <Route path='/createrecipe' component={RecipeForm} />
-      </Container>
+      <ToastContainer position='bottom-right' hideProgressBar />
+      <Route exact path='/' component={HomePage} />
+      <Route
+        path={'/(.+)'}
+        render={() => (
+          <>
+            <NavBar />
+            <Container style={{ marginTop: '7em' }}>
+              <Switch>
+                <Route exact path='/recipes' component={RecipeDashboard} />
+                <Route key={location.key} path={['/createrecipe', '/manage/:id']} component={RecipeForm} />
+                <Route path='/errors' component={TestErrors} />
+                <Route path='/server-error' component={ServerError} />
+                <Route path='/login' component={LoginForm} />
+                <Route component={NotFound} />
+              </Switch>
+            </Container>
+          </>
+        )}
+      />
     </>
   );
 }
+
 export default observer(App);

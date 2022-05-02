@@ -73,13 +73,13 @@ export default observer(function RecipeForm() {
                 {({ handleSubmit }) => (
                     <Form onSubmit={handleSubmit} autoComplete='off'>
                         <FormField>
-                            <MyTextInput label="Title" placeholder="Title" name="title" />
+                            <MyTextInput label="Title" placeholder="Title" name="title" type="text" />
                             <MySelectInput label="Difficulty" options={difficultyOptions} placeholder='Difficulty' name='difficulty' />
                             <Header as='h5' content='Duration' />
                             <Form.Group>
-                                <MyNumInput label="Days" value={recipe.duration?.days} placeholder='Days' name='duration.days' max={7} min={0} />
-                                <MyNumInput label="Hours" value={recipe.duration?.days} placeholder='Hours' name='duration.hours' max={23} min={0} />
-                                <MyNumInput label="Minutes" value={recipe.duration?.days} placeholder='Minutes' name='duration.minutes' max={59} min={0} />
+                                <MyTextInput type="number" label="Days" value={recipe.duration?.days} placeholder='Days' name='duration.days' max={7} min={0} />
+                                <MyTextInput type="number" label="Hours" value={recipe.duration?.days} placeholder='Hours' name='duration.hours' max={23} min={0} />
+                                <MyTextInput type="number" label="Minutes" value={recipe.duration?.days} placeholder='Minutes' name='duration.minutes' max={59} min={0} />
                             </Form.Group>
                             <Button loading={loading} floated='right' positive type='submit' content='Submit' />
                             <Button as={Link} to='/recipes' floated='right' type='submit' content='Cancel' />

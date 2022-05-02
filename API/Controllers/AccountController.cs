@@ -28,7 +28,7 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> login(LoginDto loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null) return Unauthorized("adgafa");
+            if (user == null) return Unauthorized();
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 

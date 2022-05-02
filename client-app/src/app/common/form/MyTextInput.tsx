@@ -5,6 +5,10 @@ interface Props {
     placeholder: string;
     name: string;
     label?: string;
+    type: string;
+    max?: number;
+    min?: number;
+    value?: number;
 }
 
 export default function MyTextInput(props: Props) {
