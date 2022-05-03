@@ -1,5 +1,6 @@
 import { makeAutoObservable, reaction } from "mobx";
 import { ServerError } from "../models/serverError";
+import { store } from "./store";
 
 export default class CommonStore {
     error: ServerError | null = null;
@@ -13,6 +14,7 @@ export default class CommonStore {
             () => this.token,
             token => {
                 if (token) {
+                    console.log(token);
                     window.localStorage.setItem('jwt', token)
                 } else {
                     window.localStorage.removeItem('jwt')

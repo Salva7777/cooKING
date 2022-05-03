@@ -2,7 +2,6 @@ import { observer } from "mobx-react-lite";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
 import { Recipe } from "../../../app/models/recipe";
 import { useStore } from "../../../app/stores/store";
-import RecipeDetails from "../details/RecipeDetails";
 
 export default observer(function RecipeList() {
     const {recipeStore} = useStore();

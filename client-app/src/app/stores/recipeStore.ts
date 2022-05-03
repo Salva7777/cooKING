@@ -9,7 +9,7 @@ export default class RecipeStore {
     recipes: Recipe[] = [];
     selectedRecipe: Recipe | undefined = undefined;
     loading = false;
-    loadingInitial = false;
+    loadingInitial = true;
 
     constructor() {
         makeAutoObservable(this)

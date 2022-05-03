@@ -28,7 +28,7 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> login(LoginDto loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null) return Unauthorized();
+            if (user == null) return Unauthorized("Invalid Email");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
@@ -36,7 +36,7 @@ namespace API.Controllers
             {
                 return CreateUserObject(user);
             }
-            return Unauthorized();
+            return Unauthorized("Email and Password doesn't match");
         }
         [HttpPost("Register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
