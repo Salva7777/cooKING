@@ -39,17 +39,24 @@ namespace Persistence
                 ingredients = new List<Ingredient>
                 {
                     new Ingredient{
+                        AppUser = users[0],
                         Name = "Limão",
                     },
                     new Ingredient{
+                        AppUser = users[0],
                         Name = "Salsa",
                     },
                     new Ingredient{
+                        AppUser = users[0],
                         Name = "Sal",
                     }
                 };
                 await context.Ingredients.AddRangeAsync(ingredients);
                 await context.SaveChangesAsync();
+            }
+            else
+            {
+                ingredients = context.Ingredients.ToList();
             }
 
             //SE A TABELA JA TIVER DADOS
@@ -66,6 +73,13 @@ namespace Persistence
                         new RecipeCooker{
                             AppUser = users[0],
                             IsOwner = true
+                        }
+                    },
+                    Ingredients = new List<RecipeIngredient>{
+                        new RecipeIngredient{
+                            Ingredient = ingredients[0],
+                            Quantity = 0.240,
+                            Measure = "Kg"
                         }
                     }
                 },

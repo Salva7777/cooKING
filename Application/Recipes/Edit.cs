@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
@@ -5,6 +6,7 @@ using AutoMapper;
 using Domain;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Recipes
@@ -36,9 +38,36 @@ namespace Application.Recipes
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var recipe = await _context.Recipes.FindAsync(request.Recipe.Id);
+                var recipe = await _context.Recipes.Include(a=> a.Ingredients).FirstOrDefaultAsync( x => x.Id == request.Recipe.Id);
 
                 if (recipe == null) return null;
+
+                foreach (var previewIngredient in request.Recipe.Ingredients)
+                {
+                    var realIngredient = recipe.Ingredients.FirstOrDefault(x => x.IngredientId == previewIngredient.IngredientId);
+                    if (realIngredient != null)
+                    {
+                        realIngredient.IngredientId = previewIngredient.IngredientId;
+                        realIngredient.Quantity = previewIngredient.Quantity;
+                        realIngredient.Measure = previewIngredient.Measure;
+                    }
+                    if (realIngredient == null)
+                    {
+                        var newIngredient = new RecipeIngredient
+                        {
+                            Recipe = recipe,
+                            Ingredient = await _context.Ingredients.FindAsync(previewIngredient.IngredientId),
+                            Quantity = previewIngredient.Quantity,
+                            Measure = previewIngredient.Measure,
+                        };
+                        recipe.Ingredients.Add(newIngredient);
+                    }
+                }
+                foreach (var existingIngredient in recipe.Ingredients.ToList())
+                {
+                    if(!request.Recipe.Ingredients.Any(x => x.IngredientId == existingIngredient.IngredientId))
+                        recipe.Ingredients.Remove(existingIngredient);
+                }
 
                 _mapper.Map(request.Recipe, recipe);
 
