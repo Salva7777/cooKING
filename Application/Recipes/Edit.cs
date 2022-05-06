@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Core;
 using AutoMapper;
 using Domain;
 using FluentValidation;
@@ -10,7 +11,7 @@ namespace Application.Recipes
 {
     public class Edit
     {
-        public class Command : IRequest<Unit>
+        public class Command : IRequest<Result<Unit>>
         {
             public Recipe Recipe { get; set; }
         }
@@ -23,7 +24,7 @@ namespace Application.Recipes
             }
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
@@ -33,15 +34,17 @@ namespace Application.Recipes
                 _context = context;
             }
 
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var recipe = await _context.Recipes.FindAsync(request.Recipe.Id);
 
+                if (recipe == null) return null;
+
                 _mapper.Map(request.Recipe, recipe);
 
-                await _context.SaveChangesAsync();
+                var result = await _context.SaveChangesAsync() > 0;
 
-                return Unit.Value;
+                return result ? Result<Unit>.Success(Unit.Value) : Result<Unit>.Failure("failed to update recipe");
             }
         }
     }

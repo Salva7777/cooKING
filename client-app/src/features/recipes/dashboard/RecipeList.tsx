@@ -15,7 +15,7 @@ export default observer(function RecipeList() {
                         <Item.Image src="https://react.semantic-ui.com/images/wireframe/image.png" alt="recipe image" size="small" />
                         <Item.Content>
                             <Item.Header as='a'>{recipe.title}</Item.Header>
-                            <Item.Meta>By: {"recipe.owner"}</Item.Meta>
+                            <Item.Meta>By: {recipe.ownerUsername}</Item.Meta>
                             <Item.Description>
                                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Delectus aperiam quos non molestiae quaerat et consequuntur laudantium impedit quisquam, dolores sapiente. Nisi nemo laborum velit eum perspiciatis accusamus ad qui.
                             </Item.Description>

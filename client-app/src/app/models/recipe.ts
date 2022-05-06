@@ -1,6 +1,9 @@
 //json to ts
 //duration porque nao existe nenhum datatype para Timespan
 
+import {Ingredient} from "./ingredient";
+import {Profile} from "./profile";
+
 export interface Duration {
     ticks: number | undefined;
     days: number | undefined;
@@ -21,5 +24,8 @@ export interface Recipe {
     difficulty: string;
     duration: Duration | any | null;
     createdAt: Date | null;
+    ownerUsername?: string;
+    cookers?: Profile[];
+    ingredients:Ingredient[];
 }
 

@@ -1,7 +1,9 @@
 using System.Text;
 using API.Services;
 using Domain;
+using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,11 +20,12 @@ namespace API.Extensions
             {
                 opt.Password.RequireNonAlphanumeric = false;
             })
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<DataContext>()
             .AddSignInManager<SignInManager<AppUser>>();
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["tokenKey"]));
-            
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(opt =>
             {
@@ -34,6 +37,15 @@ namespace API.Extensions
                     ValidateAudience = false
                 };
             });
+            services.AddAuthorization(opt =>
+            {
+                opt.AddPolicy("IsRecipeOwner", policy =>
+                {
+                    policy.Requirements.Add(new IsOwnerRequirement());
+                });
+
+            });
+            services.AddTransient<IAuthorizationHandler, IsOwnerRequirementHandler>();
             services.AddScoped<TokenService>();
 
             return services;

@@ -16,7 +16,8 @@ export default observer(function NavBar() {
                 </Menu.Item>
                 <Menu.Item as={Link} to='/recipes' name='Recipes' />
                 <Menu.Item>
-                    <Button color='black' content='Create Recipe' />
+                    <Button disabled={!isLoggedIn}
+                    as={Link} color='black' to='/createrecipe' content='Create Recipe' />
                 </Menu.Item>
                 {isLoggedIn ?
                     <Menu.Item position='right'>

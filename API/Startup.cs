@@ -25,18 +25,19 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers(opt => {
+            services.AddControllers(opt =>
+            {
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
                 opt.Filters.Add(new AuthorizeFilter(policy));
             })
-            .AddFluentValidation(Configuration =>{
+            .AddFluentValidation(Configuration =>
+            {
                 Configuration.RegisterValidatorsFromAssemblyContaining<Create>();
             });
             //Movido para outro ficheiro para limpar o startup
             services.AddApplicationServices(Configuration);
             services.AddIdentityServices(Configuration);
         }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

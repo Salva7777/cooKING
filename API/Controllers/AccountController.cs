@@ -18,8 +18,10 @@ namespace API.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly TokenService _tokenService;
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, TokenService tokenService)
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public AccountController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager, TokenService tokenService)
         {
+            _roleManager = roleManager;
             _tokenService = tokenService;
             _signInManager = signInManager;
             _userManager = userManager;
@@ -32,6 +34,18 @@ namespace API.Controllers
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
+            foreach (var role in await _userManager.GetRolesAsync(user))
+            {
+                var roleDto = new IdentityRole
+                {
+                    Id = _roleManager.FindByNameAsync(role).Result.Id,
+                    Name = _roleManager.FindByNameAsync(role).Result.Name,
+                    NormalizedName = _roleManager.FindByNameAsync(role).Result.NormalizedName,
+                    ConcurrencyStamp = _roleManager.FindByNameAsync(role).Result.ConcurrencyStamp
+                };
+                user.Roles.Add(roleDto);
+            };
+
             if (result.Succeeded)
             {
                 return CreateUserObject(user);
@@ -41,6 +55,7 @@ namespace API.Controllers
         [HttpPost("Register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
+
             if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
                 return BadRequest("Email taken");
 
@@ -56,8 +71,16 @@ namespace API.Controllers
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
+            // ATRIBUIR ROLE AO UTILIZADOR
+            var applicationRole = await _roleManager.FindByNameAsync("Admin");
+            if (applicationRole != null)
+            {
+                IdentityResult roleResult = await _userManager.AddToRoleAsync(user, applicationRole.Name);
+            }
+
             if (result.Succeeded)
             {
+
                 return CreateUserObject(user);
             }
 
@@ -79,7 +102,8 @@ namespace API.Controllers
                 DisplayName = user.DisplayName,
                 Image = null,
                 Token = _tokenService.CreateToken(user),
-                Username = user.UserName
+                Username = user.UserName,
+                Roles = user.Roles,
             };
         }
     }

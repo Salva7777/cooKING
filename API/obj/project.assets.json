@@ -849,6 +849,19 @@
           "bin/placeholder/Domain.dll": {}
         }
       },
+      "Infrastructure/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "Application": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Infrastructure.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Infrastructure.dll": {}
+        }
+      },
       "Persistence/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
@@ -2154,6 +2167,11 @@
       "path": "../Domain/Domain.csproj",
       "msbuildProject": "../Domain/Domain.csproj"
     },
+    "Infrastructure/1.0.0": {
+      "type": "project",
+      "path": "../Infrastructure/Infrastructure.csproj",
+      "msbuildProject": "../Infrastructure/Infrastructure.csproj"
+    },
     "Persistence/1.0.0": {
       "type": "project",
       "path": "../Persistence/Persistence.csproj",
@@ -2163,6 +2181,7 @@
   "projectFileDependencyGroups": {
     "net6.0": [
       "Application >= 1.0.0",
+      "Infrastructure >= 1.0.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 6.0.4",
       "Microsoft.AspNetCore.Authentication.OpenIdConnect >= 6.0.4",
       "Microsoft.EntityFrameworkCore.Design >= 6.0.4",
@@ -2175,11 +2194,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\salva\\source\\repos\\cooking\\api\\API.csproj",
+      "projectUniqueName": "C:\\Users\\salva\\source\\repos\\cooking\\API\\API.csproj",
       "projectName": "API",
-      "projectPath": "C:\\Users\\salva\\source\\repos\\cooking\\api\\API.csproj",
+      "projectPath": "C:\\Users\\salva\\source\\repos\\cooking\\API\\API.csproj",
       "packagesPath": "C:\\Users\\salva\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\salva\\source\\repos\\cooking\\api\\obj\\",
+      "outputPath": "C:\\Users\\salva\\source\\repos\\cooking\\API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\salva\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -2198,6 +2217,9 @@
           "projectReferences": {
             "C:\\Users\\salva\\source\\repos\\cooking\\Application\\Application.csproj": {
               "projectPath": "C:\\Users\\salva\\source\\repos\\cooking\\Application\\Application.csproj"
+            },
+            "C:\\Users\\salva\\source\\repos\\cooking\\Infrastructure\\Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\salva\\source\\repos\\cooking\\Infrastructure\\Infrastructure.csproj"
             }
           }
         }

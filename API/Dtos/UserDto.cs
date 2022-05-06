@@ -1,3 +1,6 @@
+using Domain;
+using Microsoft.AspNetCore.Identity;
+
 namespace API.Dtos
 {
     public class UserDto
@@ -6,6 +9,6 @@ namespace API.Dtos
         public string Token { get; set; }
         public string Username { get; set; }
         public string Image { get; set; }
-        
+        public ICollection<IdentityRole> Roles { get; set; } = new List<IdentityRole>();
     }
 }

@@ -1,15 +1,21 @@
+
+
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Core;
+using Application.Interfaces;
 using Domain;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Recipes
 {
     public class Create
     {
-        public class Command : IRequest
+        public class Command : IRequest<Result<Unit>>
         {
             public Recipe Recipe { get; set; }
         }
@@ -21,21 +27,36 @@ namespace Application.Recipes
             }
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
-            public Handler(DataContext context)
+            private readonly IUserAccessor _userAccessor;
+            public Handler(DataContext context, IUserAccessor userAccessor)
             {
+                _userAccessor = userAccessor;
                 _context = context;
             }
 
-            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
+                var user = await _context.Users.FirstOrDefaultAsync(x =>
+                x.UserName == _userAccessor.GetUsername());
+
+                var cooker = new RecipeCooker
+                {
+                    AppUser = user,
+                    Recipe = request.Recipe,
+                    IsOwner = true
+                };
+                request.Recipe.Cookers.Add(cooker);
+
                 _context.Recipes.Add(request.Recipe);
 
-                await _context.SaveChangesAsync();
+                var result = await _context.SaveChangesAsync() > 0;
 
-                return Unit.Value;
+                if (!result) return Result<Unit>.Failure("Failed to creeate recipe");
+
+                return Result<Unit>.Success(Unit.Value);
             }
         }
     }
