@@ -31,18 +31,17 @@ namespace Application.Recipes
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername());
-                if (user == null) return null;
+                if (user == null) return Result<Unit>.Failure("You must have an account to like a recipe");
 
                 var recipe = await _context.Recipes
                 .Include(a => a.Cookers)
                 .ThenInclude(u => u.AppUser)
                 .SingleOrDefaultAsync(x => x.Id == request.Id);
 
-                if (recipe == null) return null;
+                if (recipe == null) return Result<Unit>.Failure("Recipe not found");
 
                 var ownerUsername = recipe.Cookers.FirstOrDefault(x => x.IsOwner)?.AppUser.UserName;
-
-                if (ownerUsername != null) return null;
+                if (ownerUsername == user.UserName) return Result<Unit>.Failure("You can't like your own recipe");
 
                 var like = recipe.Cookers.FirstOrDefault(x => x.AppUser.UserName == user.UserName);
 
@@ -63,7 +62,7 @@ namespace Application.Recipes
 
                 var result = await _context.SaveChangesAsync() > 0;
 
-                return result ? Result<Unit>.Success(Unit.Value) : Result<Unit>.Failure("Failed to creeate recipe");
+                return result ? Result<Unit>.Success(Unit.Value) : Result<Unit>.Failure("Failed to like recipe");
             }
         }
     }

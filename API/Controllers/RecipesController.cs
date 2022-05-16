@@ -15,6 +15,7 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new List.Query()));
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<Recipe>> GetRecipe(Guid id)
         {
@@ -42,6 +43,7 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
         }
 
+        [AllowAnonymous]
         [HttpPost("{id}/like")]
         public async Task<IActionResult> Like(Guid id)
         {

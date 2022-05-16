@@ -18,6 +18,7 @@ export default class UserStore {
 
     login = async (creds: UserFormValues) => {
         try {
+            store.recipeStore.recipeRegistry.clear();
             const user = await agent.Account.login(creds);
             store.commonStore.setToken(user.token);
             runInAction(() => this.user = user);
@@ -31,7 +32,7 @@ export default class UserStore {
     logout = () => {
         store.commonStore.setToken(null);
         window.localStorage.removeItem('jwt');
-        history.push('/recipes')
+        store.recipeStore.recipeRegistry.clear();
         this.user = null;
     }
 

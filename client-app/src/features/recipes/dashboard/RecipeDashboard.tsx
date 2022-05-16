@@ -18,7 +18,7 @@ export default observer(function RecipeDashBoard() {
 
     return (
         <Grid>
-            <Grid.Column width='10'>
+            <Grid.Column width='8'>
                 <RecipeList />
             </Grid.Column>
         </Grid>

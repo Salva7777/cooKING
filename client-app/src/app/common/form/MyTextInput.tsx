@@ -1,5 +1,5 @@
 import { useField } from "formik";
-import { Form, Label } from "semantic-ui-react";
+import { Form, Input, Label } from "semantic-ui-react";
 
 interface Props {
     placeholder: string;
@@ -8,7 +8,7 @@ interface Props {
     type: string;
     max?: number;
     min?: number;
-    value?: number;
+    step?: number;
 }
 
 export default function MyTextInput(props: Props) {
@@ -16,7 +16,7 @@ export default function MyTextInput(props: Props) {
     return (
         <Form.Field error={meta.touched && !!meta.error}>
             <label>{props.label}</label>
-            <input {...field}{...props} />
+            <Input {...field}{...props} />
             {meta.touched && meta.error ? (
                 <Label basic color='red'>{meta.error}</Label>
             ) : null}

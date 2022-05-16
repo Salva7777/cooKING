@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Container } from 'semantic-ui-react';
+import { Container, Segment } from 'semantic-ui-react';
 import NavBar from './NavBar';
 import RecipeDashboard from '../../features/recipes/dashboard/RecipeDashboard';
 import { observer } from 'mobx-react-lite';
@@ -13,6 +13,7 @@ import ServerError from '../../features/errors/ServerError';
 import { useStore } from '../stores/store';
 import LoadingComponent from './LoadingComponent';
 import ModalContainer from '../common/modals/ModalContainer';
+import RecipeDetails from '../../features/recipes/details/RecipeDetails';
 
 function App() {
   const location = useLocation();
@@ -38,9 +39,10 @@ function App() {
         render={() => (
           <>
             <NavBar />
-            <Container style={{ marginTop: '7em' }}>
-              <Switch>
+            <Container style={{ marginTop: '7em'}}>
+              <Switch >
                 <Route exact path='/recipes' component={RecipeDashboard} />
+                <Route exact path='/recipe/:id' component={RecipeDetails} />
                 <Route key={location.key} path={['/createrecipe', '/manage/:id']} component={RecipeForm} />
                 <Route path='/errors' component={TestErrors} />
                 <Route path='/server-error' component={ServerError} />

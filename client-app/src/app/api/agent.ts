@@ -1,7 +1,8 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify'
 import { history } from '../..';
-import { Recipe } from '../models/recipe';
+import { Ingredient } from '../models/ingredient';
+import { Recipe, RecipeFormValues } from '../models/recipe';
 import { User, UserFormValues } from '../models/user';
 import { store } from '../stores/store';
 
@@ -69,9 +70,17 @@ const requests = {
 const Recipes = {
     list: () => requests.get<Recipe[]>('/recipes'),
     details: (id: string) => requests.get<Recipe>(`/recipes/${id}`),
-    put: (recipe: Recipe) => requests.put<void>(`/recipes/${recipe.id}`, recipe),
-    post: (recipe: Recipe) => requests.post<void>(`/recipes`, recipe),
-    delete: (id: string) => requests.delete<void>(`/recipes/${id}`)
+    put: (recipe: RecipeFormValues) => requests.put<void>(`/recipes/${recipe.id}`, recipe).then(() => console.log("saodcsa")),
+    post: (recipe: RecipeFormValues) => requests.post<void>(`/recipes`, recipe),
+    delete: (id: string) => requests.delete<void>(`/recipes/${id}`),
+    like: (id: string) => requests.post<void>(`/recipes/${id}/like`, {})
+}
+const Ingredients = {
+    list: () => requests.get<Ingredient[]>('/ingredients'),
+    details: (id: string) => requests.get<Ingredient>(`/ingredients/${id}`),
+    // put: (recipe: RecipeFormValues) => requests.put<void>(`/ingredients/${recipe.id}`, recipe),
+    // post: (recipe: RecipeFormValues) => requests.post<void>(`/ingredients`, recipe),
+    delete: (id: string) => requests.delete<void>(`/ingredients/${id}`),
 }
 
 const Account = {
@@ -81,7 +90,8 @@ const Account = {
 }
 const agent = {
     Recipes,
-    Account
+    Account,
+    Ingredients,
 }
 
 export default agent;

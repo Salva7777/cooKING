@@ -40,14 +40,12 @@ namespace Application.Ingredients
                 x.UserName == _userAccessor.GetUsername());
 
                 request.Ingredient.AppUser = user;
-
-                _context.Ingredients.Add(request.Ingredient);
+                if (!await _context.Ingredients.AnyAsync(x => x.Name == request.Ingredient.Name))
+                    _context.Ingredients.Add(request.Ingredient);
 
                 var result = await _context.SaveChangesAsync() > 0;
 
                 return result ? Result<Unit>.Success(Unit.Value) : Result<Unit>.Failure("Failed to creeate ingredient");
-
-
             }
         }
     }

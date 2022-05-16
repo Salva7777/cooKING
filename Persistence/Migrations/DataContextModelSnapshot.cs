@@ -109,6 +109,32 @@ namespace Persistence.Migrations
                     b.ToTable("Ingredients");
                 });
 
+            modelBuilder.Entity("Domain.Photo", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsMain")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("RecipeId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("Photos");
+                });
+
             modelBuilder.Entity("Domain.Recipe", b =>
                 {
                     b.Property<Guid>("Id")
@@ -311,6 +337,17 @@ namespace Persistence.Migrations
                     b.Navigation("AppUser");
                 });
 
+            modelBuilder.Entity("Domain.Photo", b =>
+                {
+                    b.HasOne("Domain.AppUser", null)
+                        .WithMany("Photos")
+                        .HasForeignKey("AppUserId");
+
+                    b.HasOne("Domain.Recipe", null)
+                        .WithMany("Photos")
+                        .HasForeignKey("RecipeId");
+                });
+
             modelBuilder.Entity("Domain.RecipeCooker", b =>
                 {
                     b.HasOne("Domain.AppUser", "AppUser")
@@ -402,6 +439,8 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.AppUser", b =>
                 {
+                    b.Navigation("Photos");
+
                     b.Navigation("Recipes");
                 });
 
@@ -415,6 +454,8 @@ namespace Persistence.Migrations
                     b.Navigation("Cookers");
 
                     b.Navigation("Ingredients");
+
+                    b.Navigation("Photos");
                 });
 #pragma warning restore 612, 618
         }

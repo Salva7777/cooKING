@@ -9,5 +9,11 @@ export interface UserFormValues {
     password: string;
     displayName?: string;
     username?: string;
-
+    roles?:Role[];
+}
+export interface Role {
+    id: string;
+    name: string;
+    normalizedName: string;
+    concurrencyStamp: string;
 }

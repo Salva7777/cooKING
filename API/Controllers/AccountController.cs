@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Persistence;
 
 namespace API.Controllers
 {
@@ -18,9 +19,11 @@ namespace API.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly TokenService _tokenService;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        public AccountController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager, TokenService tokenService)
+        private readonly RoleManager<AppRole> _roleManager;
+        private readonly DataContext _context;
+        public AccountController(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, SignInManager<AppUser> signInManager, TokenService tokenService, DataContext context)
         {
+            _context = context;
             _roleManager = roleManager;
             _tokenService = tokenService;
             _signInManager = signInManager;
@@ -29,22 +32,11 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> login(LoginDto loginDto)
         {
-            var user = await _userManager.FindByEmailAsync(loginDto.Email);
+            var user = await _context.Users.Include(x => x.UserRoles).ThenInclude(x => x.Role).AsNoTracking().FirstOrDefaultAsync(x => x.Email == loginDto.Email);
+
             if (user == null) return Unauthorized("Invalid Email");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
-
-            foreach (var role in await _userManager.GetRolesAsync(user))
-            {
-                var roleDto = new IdentityRole
-                {
-                    Id = _roleManager.FindByNameAsync(role).Result.Id,
-                    Name = _roleManager.FindByNameAsync(role).Result.Name,
-                    NormalizedName = _roleManager.FindByNameAsync(role).Result.NormalizedName,
-                    ConcurrencyStamp = _roleManager.FindByNameAsync(role).Result.ConcurrencyStamp
-                };
-                user.Roles.Add(roleDto);
-            };
 
             if (result.Succeeded)
             {
@@ -91,19 +83,25 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
-            var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+            var user = await _context.Users.Include(x => x.UserRoles).ThenInclude(x => x.Role).FirstOrDefaultAsync(x => x.Email == User.FindFirstValue(ClaimTypes.Email));
+
             return CreateUserObject(user);
         }
 
         private UserDto CreateUserObject(AppUser user)
         {
+            var rolesArray = new List<IdentityRole>();
+            foreach (var role in user.UserRoles)
+            {
+                rolesArray.Add(role.Role);
+            }
             return new UserDto
             {
                 DisplayName = user.DisplayName,
                 Image = null,
                 Token = _tokenService.CreateToken(user),
                 Username = user.UserName,
-                Roles = user.Roles,
+                Roles = rolesArray
             };
         }
     }

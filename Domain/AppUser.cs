@@ -4,13 +4,14 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Domain
 {
-    public class AppUser : IdentityUser
+    public class AppUser : IdentityUser<string>
     {
         public string DisplayName { get; set; }
         public string Bio { get; set; }
+        public ICollection<Photo> Photos { get; set; }
+
         public ICollection<RecipeCooker> Recipes { get; set; }
-        [NotMapped]
-        public ICollection<IdentityRole> Roles { get; set; } = new List<IdentityRole>();
+        public ICollection<AppUserRole> UserRoles { get; set; }
 
     }
 }

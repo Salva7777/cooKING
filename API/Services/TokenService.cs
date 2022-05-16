@@ -25,10 +25,10 @@ namespace API.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email),
             };
-            if (user.Roles != null)
-                foreach (var role in user.Roles)
+            if (user.UserRoles != null)
+                foreach (var userRole in user.UserRoles)
                 {
-                    claims.Add(new Claim(ClaimTypes.Role, role.Name));
+                    claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
                 }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Configuration["TokenKey"]));

@@ -10,7 +10,7 @@ namespace Persistence
     public class Seed
     {
         //SEED DATA INTO TABLE
-        public static async Task SeedData(DataContext context, UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
+        public static async Task SeedData(DataContext context, UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
         {
             List<AppUser> users;
             if (!userManager.Users.Any())

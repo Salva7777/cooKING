@@ -1,12 +1,13 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { arrayBuffer } from "stream/consumers";
 import agent from "../api/agent";
-import { Recipe } from "../models/recipe";
+import { Recipe, RecipeFormValues } from "../models/recipe";
 import { v4 as uuid } from 'uuid';
+import { store } from "./store";
+import { Profile } from "../models/profile";
+import { array } from "yup";
 
 export default class RecipeStore {
     recipeRegistry = new Map<string, Recipe>();
-    recipes: Recipe[] = [];
     selectedRecipe: Recipe | undefined = undefined;
     loading = false;
     loadingInitial = false;
@@ -27,14 +28,10 @@ export default class RecipeStore {
         this.setLoadingInitial(true);
         try {
             const recipes = await agent.Recipes.list();
-            runInAction(() => {
-                recipes.forEach(recipe => {
-                    this.loadingInitial = false;
-                    this.recipeRegistry.set(recipe.id, recipe)
-                })
-                this.setLoadingInitial(false);
-            }
-            )
+            recipes.forEach(recipe => {
+                this.setRecipe(recipe)
+            })
+            this.setLoadingInitial(false);
         } catch (error) {
             console.log(error);
             this.setLoadingInitial(false);
@@ -64,6 +61,16 @@ export default class RecipeStore {
     }
 
     private setRecipe = (recipe: Recipe) => {
+        //porque o MAP.set nao aguenta com keys transforma-se o objeto em array
+        recipe.duration = Object.values(recipe.duration);
+        const user = store.userStore.user;
+        if (user) {
+            recipe.liked = recipe.cookers!.some(
+                a => a.username === user.username
+            )
+            recipe.isOwner = recipe.ownerUsername === user.username;
+        }
+        recipe.owner = recipe.cookers?.find(x => x.username === recipe.ownerUsername);
         this.recipeRegistry.set(recipe.id, recipe);
     }
 
@@ -71,40 +78,72 @@ export default class RecipeStore {
         this.loadingInitial = state;
     }
 
-    createRecipe = async (recipe: Recipe) => {
-        this.loading = true;
-        recipe.id = uuid();
+    createRecipe = async (recipe: RecipeFormValues) => {
+        const user = store.userStore.user;
+        const cooker = new Profile(user!);
         try {
             await agent.Recipes.post(recipe);
+            const newRecipe = new Recipe(recipe);
+            newRecipe.ownerUsername = user!.username;
+            newRecipe.cookers = [cooker];
+            this.setRecipe(newRecipe);
             runInAction(() => {
-                this.recipeRegistry.set(recipe.id, recipe);
-                this.selectedRecipe = recipe;
-                this.loading = false;
+                this.selectedRecipe = newRecipe;
             })
         } catch (error) {
             console.log(error);
-            runInAction(() => {
-                this.loading = false;
-            })
         }
     }
 
-    updateRecipe = async (recipe: Recipe) => {
+    updateRecipe = async (recipe: RecipeFormValues) => {
         this.loading = true;
         try {
+            console.log(recipe);
             await agent.Recipes.put(recipe);
-            runInAction(() => {
-                this.recipeRegistry.set(recipe.id, recipe);
-                this.selectedRecipe = recipe;
-                this.loading = false;
-            })
+            if (recipe.id) {
+                var updatedRecipeFromApi = await agent.Recipes.details(recipe.id);
+                updatedRecipeFromApi.duration = Object.values(updatedRecipeFromApi.duration);
+                console.log(updatedRecipeFromApi);
+                let updateRecipe = { ...this.getRecipe(recipe.id), ...updatedRecipeFromApi }
+                this.recipeRegistry.set(recipe.id, updateRecipe as Recipe);
+                this.selectedRecipe = updateRecipe as Recipe;
+                console.log(this.getRecipe(recipe.id));
+                this.loading = false
+            }
         } catch (error) {
             console.log(error);
-            runInAction(() => {
-                this.loading = false;
-            })
         }
     }
 
+    likeRecipe = async (id?: string) => {
+        const user = store.userStore.user;
+        this.loading = true;
+        try {
+            if (!this.selectedRecipe) this.selectedRecipe = this.getRecipe(id!);
+            await agent.Recipes.like(this.selectedRecipe!.id);
+
+            runInAction(() => {
+                if (this.selectedRecipe?.liked) {
+                    this.selectedRecipe.cookers = this.selectedRecipe.cookers?.filter(a => a.username !== user?.username);
+                    this.selectedRecipe.liked = false;
+                } else {
+                    const cooker = new Profile(user!);
+                    this.selectedRecipe?.cookers?.push(cooker);
+                    this.selectedRecipe!.liked = true;
+                }
+                this.recipeRegistry.set(this.selectedRecipe!.id, this.selectedRecipe!)
+            })
+            if (id)
+                this.clearSelectedRecipe();
+        } catch (error) {
+            console.log(error);
+        } finally {
+            runInAction(() => this.loading = false);
+        }
+    }
+
+    clearSelectedRecipe = () => {
+        this.selectedRecipe = undefined;
+    }
 
 }

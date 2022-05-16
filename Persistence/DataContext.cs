@@ -1,16 +1,19 @@
 using Domain;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence
 {
-    public class DataContext : IdentityDbContext<AppUser>
+    public class DataContext : IdentityDbContext<AppUser, AppRole, string, IdentityUserClaim<string>,
+AppUserRole, IdentityUserLogin<string>,
+IdentityRoleClaim<string>, IdentityUserToken<string>>
     {
         public DataContext(DbContextOptions options) : base(options)
         {
 
         }
-
+        public DbSet<Photo> Photos { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<RecipeCooker> RecipeCookers { get; set; }
@@ -46,17 +49,17 @@ namespace Persistence
 
 
 
-        // builder.Entity<AppUserRole>(x => x.HasKey(aa => new { aa.AppUserId, aa.RoleId }));
+            builder.Entity<AppUserRole>(userRole => userRole.HasKey(ur => new { ur.UserId, ur.RoleId }));
 
-        // builder.Entity<AppUserRole>()
-        // .HasOne(u => u.Role)
-        // .WithMany(a => a.Users)
-        // .HasForeignKey(aa => aa.RoleId);
+            builder.Entity<AppUserRole>()
+            .HasOne(ur => ur.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.RoleId);
 
-        // builder.Entity<AppUserRole>()
-        // .HasOne(u => u.AppUser)
-        // .WithMany(a => a.Roles)
-        // .HasForeignKey(aa => aa.AppUserId);
+            builder.Entity<AppUserRole>()
+            .HasOne(ur => ur.User)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.UserId);
+        }
     }
-}
 }
