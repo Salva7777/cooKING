@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using Domain;
 
 namespace Application.Ingredients
 {
@@ -8,7 +6,7 @@ namespace Application.Ingredients
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public double Quantity { get; set; }
-        public string Measure { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string CreatorId { get; set; }
     }
 }

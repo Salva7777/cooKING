@@ -25,7 +25,7 @@ export default observer(function RecipeListItem({ recipe }: Props) {
                 <Header size="huge">{recipe.title}</Header>
                 <Image fluid src={recipe.image ? recipe.image : 'https://4.bp.blogspot.com/-OCutvC4wPps/XfNnRz5PvhI/AAAAAAAAEfo/qJ8P1sqLWesMdOSiEoUH85s3hs_vn97HACLcBGAsYHQ/s1600/no-image-found-360x260.png'} />
             </Container>
-            <Label color={recipe.duration[8] > 59 ? "orange" : recipe.duration[8] > 9 ? "yellow" : "green"} size="big">
+            <Label color={recipe.duration[8] >= 60 ? "orange" : recipe.duration[8] >= 10 ? "yellow" : "green"} size="big">
                 {console.log(recipe.duration)}
                 <Icon name="clock outline"></Icon>{(recipe.duration[1] != 0 ? recipe.duration[1] + "d " : "") + ("0" + recipe.duration[2]).slice(-2) + "h " + ("0" + recipe.duration[3]).slice(-2) + "m " + ("0" + recipe.duration[4]).slice(-2) + "s "}
             </Label>

@@ -12,5 +12,12 @@ namespace API.Controllers
         {
             return HandleResult(await Mediator.Send(new Details.Query { Username = username }));
         }
+
+        [Authorize]
+        [HttpPost("updateinventory")]
+        public async Task<IActionResult> UpdateInventory(List<Guid> ids)
+        {
+            return HandleResult(await Mediator.Send(new UpdateInventory.Command { Ids = ids }));
+        }
     }
 }

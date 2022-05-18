@@ -10,9 +10,9 @@ namespace API.Controllers
     {
         [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult> GetRecipes()
+        public async Task<ActionResult> GetRecipes([FromQuery] RecipeParams param)
         {
-            return HandleResult(await Mediator.Send(new List.Query()));
+            return HandleResult(await Mediator.Send(new List.Query { Params = param }));
         }
 
         [AllowAnonymous]

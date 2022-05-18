@@ -12,9 +12,9 @@ namespace Application.Ingredients
 {
     public class List
     {
-        public class Query : IRequest<Result<List<BasicIngredientDto>>> { }
+        public class Query : IRequest<Result<List<IngredientDto>>> { }
 
-        public class Handler : IRequestHandler<Query, Result<List<BasicIngredientDto>>>
+        public class Handler : IRequestHandler<Query, Result<List<IngredientDto>>>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
@@ -24,13 +24,13 @@ namespace Application.Ingredients
                 _context = context;
             }
 
-            public async Task<Result<List<BasicIngredientDto>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<IngredientDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var ingredients = await _context.Ingredients
-                .ProjectTo<BasicIngredientDto>(_mapper.ConfigurationProvider)
+                .ProjectTo<IngredientDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
-                return Result<List<BasicIngredientDto>>.Success(ingredients);
+                return Result<List<IngredientDto>>.Success(ingredients);
             }
         }
     }

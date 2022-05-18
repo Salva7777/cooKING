@@ -19,6 +19,6 @@ namespace Application.Recipes
         public string OwnerUsername { get; set; }
         public string Image { get; set; }
         public ICollection<Profile> Cookers { get; set; }
-        public ICollection<IngredientDto> Ingredients { get; set; }
+        public ICollection<RecipeIngredientDto> Ingredients { get; set; }
     }
 }

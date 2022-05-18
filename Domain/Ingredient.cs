@@ -11,5 +11,7 @@ namespace Domain
         public string AppUserId { get; set; }
         public AppUser AppUser { get; set; }
         public ICollection<RecipeIngredient> Recipes { get; set; } = new List<RecipeIngredient>();
+        public ICollection<UserIngredient> Users { get; set; } = new List<UserIngredient>();
+
     }
 }

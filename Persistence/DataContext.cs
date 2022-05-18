@@ -18,6 +18,7 @@ IdentityRoleClaim<string>, IdentityUserToken<string>>
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<RecipeCooker> RecipeCookers { get; set; }
         public DbSet<RecipeIngredient> RecipeIngredients { get; set; }
+        public DbSet<UserIngredient> UserIngredients { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -48,7 +49,6 @@ IdentityRoleClaim<string>, IdentityUserToken<string>>
             .HasForeignKey(aa => aa.IngredientId);
 
 
-
             builder.Entity<AppUserRole>(userRole => userRole.HasKey(ur => new { ur.UserId, ur.RoleId }));
 
             builder.Entity<AppUserRole>()
@@ -60,6 +60,18 @@ IdentityRoleClaim<string>, IdentityUserToken<string>>
             .HasOne(ur => ur.User)
                 .WithMany(r => r.UserRoles)
                 .HasForeignKey(ur => ur.UserId);
+
+            builder.Entity<UserIngredient>(UserIngredient => UserIngredient.HasKey(ui => new { ui.AppUserId, ui.IngredientId }));
+
+            builder.Entity<UserIngredient>()
+            .HasOne(u => u.AppUser)
+            .WithMany(i => i.Ingredients)
+            .HasForeignKey(ui => ui.AppUserId);
+
+            builder.Entity<UserIngredient>()
+            .HasOne(i => i.Ingredient)
+            .WithMany(u => u.Users)
+            .HasForeignKey(ui => ui.IngredientId);
         }
     }
 }

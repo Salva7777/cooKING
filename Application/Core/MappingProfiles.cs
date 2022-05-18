@@ -24,10 +24,10 @@ namespace Application.Core
             CreateMap<Ingredient, Ingredient>()
             .ForMember(d => d.CreatedAt, o => o.Ignore())
             .ForMember(d => d.AppUserId, o => o.Ignore());
-            CreateMap<RecipeIngredient, IngredientDto>()
+            CreateMap<RecipeIngredient, RecipeIngredientDto>()
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Ingredient.Name))
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Ingredient.Id));
-            CreateMap<Ingredient, BasicIngredientDto>()
+            CreateMap<Ingredient, IngredientDto>()
             .ForMember(d => d.CreatorId, o => o.MapFrom(s => s.AppUser.Id));
             CreateMap<AppUser, Profiles.Profile>()
             .ForMember(d => d.Image, o => o.MapFrom(s => s.Photos.FirstOrDefault(x => x.IsMain).Url));
