@@ -38,7 +38,7 @@ namespace Application.Recipes
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var recipe = await _context.Recipes.Include(a=> a.Ingredients).FirstOrDefaultAsync( x => x.Id == request.Recipe.Id);
+                var recipe = await _context.Recipes.Include(a => a.Ingredients).Include(r => r.PreparationSteps).FirstOrDefaultAsync(x => x.Id == request.Recipe.Id);
 
                 if (recipe == null) return null;
 
@@ -51,7 +51,7 @@ namespace Application.Recipes
                         realIngredient.Quantity = previewIngredient.Quantity;
                         realIngredient.Measure = previewIngredient.Measure;
                     }
-                    if (realIngredient == null)
+                    else
                     {
                         var newIngredient = new RecipeIngredient
                         {
@@ -65,10 +65,35 @@ namespace Application.Recipes
                 }
                 foreach (var existingIngredient in recipe.Ingredients.ToList())
                 {
-                    if(!request.Recipe.Ingredients.Any(x => x.IngredientId == existingIngredient.IngredientId))
+                    if (!request.Recipe.Ingredients.Any(x => x.IngredientId == existingIngredient.IngredientId))
                         recipe.Ingredients.Remove(existingIngredient);
                 }
-
+                for (int i = 0; i != request.Recipe.PreparationSteps.Count(); i++)
+                {
+                    var previewStep = request.Recipe.PreparationSteps.ToList()[i];
+                    request.Recipe.PreparationSteps.FirstOrDefault(x => request.Recipe.PreparationSteps.ToList()[i] == x).StepNo = i;
+                    var realStep = recipe.PreparationSteps.FirstOrDefault(x => x.StepNo == i);
+                    if (realStep != null)
+                    {
+                        realStep.Text = previewStep.Text;
+                    }
+                    else
+                    {
+                        var newStep = new PreparationStep
+                        {
+                            StepNo = i,
+                            Text = previewStep.Text,
+                        };
+                        recipe.PreparationSteps.Add(newStep);
+                    }
+                }
+                foreach (var existingStep in recipe.PreparationSteps.ToList())
+                {
+                    if (existingStep.StepNo >= request.Recipe.PreparationSteps.Count())
+                    {
+                        _context.PreparationSteps.Remove(existingStep);
+                    }
+                }
                 _mapper.Map(request.Recipe, recipe);
 
                 var result = await _context.SaveChangesAsync() > 0;

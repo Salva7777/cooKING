@@ -128,6 +128,33 @@ namespace Persistence.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Body")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("RecipeId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("Domain.Ingredient", b =>
                 {
                     b.Property<Guid>("Id")
@@ -140,8 +167,17 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("GlutenFree")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("LactoseFree")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("Veggie")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -174,6 +210,24 @@ namespace Persistence.Migrations
                     b.HasIndex("RecipeId");
 
                     b.ToTable("Photos");
+                });
+
+            modelBuilder.Entity("Domain.PreparationStep", b =>
+                {
+                    b.Property<int>("StepNo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("RecipeId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("StepNo", "RecipeId");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("PreparationSteps");
                 });
 
             modelBuilder.Entity("Domain.Recipe", b =>
@@ -239,6 +293,21 @@ namespace Persistence.Migrations
                     b.HasIndex("RecipeId");
 
                     b.ToTable("RecipeIngredients");
+                });
+
+            modelBuilder.Entity("Domain.UserFollowing", b =>
+                {
+                    b.Property<string>("OserverId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TargetId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("OserverId", "TargetId");
+
+                    b.HasIndex("TargetId");
+
+                    b.ToTable("UserFollowings");
                 });
 
             modelBuilder.Entity("Domain.UserIngredient", b =>
@@ -362,6 +431,22 @@ namespace Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Comment", b =>
+                {
+                    b.HasOne("Domain.AppUser", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+
+                    b.HasOne("Domain.Recipe", "Recipe")
+                        .WithMany("Comments")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Recipe");
+                });
+
             modelBuilder.Entity("Domain.Ingredient", b =>
                 {
                     b.HasOne("Domain.AppUser", "AppUser")
@@ -380,6 +465,17 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.Recipe", null)
                         .WithMany("Photos")
                         .HasForeignKey("RecipeId");
+                });
+
+            modelBuilder.Entity("Domain.PreparationStep", b =>
+                {
+                    b.HasOne("Domain.Recipe", "Recipe")
+                        .WithMany("PreparationSteps")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recipe");
                 });
 
             modelBuilder.Entity("Domain.RecipeCooker", b =>
@@ -418,6 +514,25 @@ namespace Persistence.Migrations
                     b.Navigation("Ingredient");
 
                     b.Navigation("Recipe");
+                });
+
+            modelBuilder.Entity("Domain.UserFollowing", b =>
+                {
+                    b.HasOne("Domain.AppUser", "Observer")
+                        .WithMany("Followings")
+                        .HasForeignKey("OserverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.AppUser", "Target")
+                        .WithMany("Followers")
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Observer");
+
+                    b.Navigation("Target");
                 });
 
             modelBuilder.Entity("Domain.UserIngredient", b =>
@@ -482,6 +597,10 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.AppUser", b =>
                 {
+                    b.Navigation("Followers");
+
+                    b.Navigation("Followings");
+
                     b.Navigation("Ingredients");
 
                     b.Navigation("Photos");
@@ -500,11 +619,15 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Recipe", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Cookers");
 
                     b.Navigation("Ingredients");
 
                     b.Navigation("Photos");
+
+                    b.Navigation("PreparationSteps");
                 });
 #pragma warning restore 612, 618
         }

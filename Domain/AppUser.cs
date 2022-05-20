@@ -11,6 +11,8 @@ namespace Domain
         public ICollection<Photo> Photos { get; set; }
 
         public ICollection<RecipeCooker> Recipes { get; set; }
+        public ICollection<UserFollowing> Followings { get; set; }
+        public ICollection<UserFollowing> Followers { get; set; }
         public ICollection<UserIngredient> Ingredients { get; set; } = new List<UserIngredient>();
         public ICollection<AppUserRole> UserRoles { get; set; }
     }

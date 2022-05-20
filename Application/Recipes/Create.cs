@@ -1,6 +1,7 @@
 
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
@@ -49,6 +50,10 @@ namespace Application.Recipes
                     IsOwner = true
                 };
                 request.Recipe.Cookers.Add(cooker);
+                for (int i = 0; i != request.Recipe.PreparationSteps.Count; i++)
+                {
+                    request.Recipe.PreparationSteps.FirstOrDefault(x => request.Recipe.PreparationSteps.ToList()[i] == x).StepNo = i;
+                }
 
                 _context.Recipes.Add(request.Recipe);
 

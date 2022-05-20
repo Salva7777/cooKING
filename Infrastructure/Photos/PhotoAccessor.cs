@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Application.Interfaces;
 using Application.Photos;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;

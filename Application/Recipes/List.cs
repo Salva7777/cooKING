@@ -35,7 +35,7 @@ namespace Application.Recipes
 
             public async Task<Result<List<RecipeDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var user = await _context.Users.Include(u => u.Ingredients).FirstOrDefaultAsync(u => u.UserName == _userAccessor.GetUsername());
+                var user = await _context.Users.Include(u => u.Ingredients).Include(u => u.Followings).ThenInclude(u => u.Target).FirstOrDefaultAsync(u => u.UserName == _userAccessor.GetUsername());
 
                 var recipes = _context.Recipes.Include(r => r.Cookers).Include(r => r.Ingredients)
                 .ThenInclude(i => i.Ingredient)
@@ -94,6 +94,30 @@ namespace Application.Recipes
                 {
                     recipes = recipes
                         .Where(r => r.Duration.TotalMinutes < request.Params.Duration);
+                }
+
+                if (request.Params.Veggie)
+                {
+                    recipes = recipes
+                    .Where(r => r.Ingredients.All(ri => ri.Veggie));
+                }
+
+                if (request.Params.LactoseFree)
+                {
+                    recipes = recipes
+                    .Where(r => r.Ingredients.All(ri => ri.LactoseFree));
+                }
+
+                if (request.Params.GlutenFree)
+                {
+                    recipes = recipes
+                    .Where(r => r.Ingredients.All(ri => ri.GlutenFree));
+                }
+
+                if (request.Params.isFollowingOwner)
+                {
+                    recipes = recipes
+                    .Where(r => user.Followings.Any(uf => uf.Target.UserName == r.OwnerUsername));
                 }
 
 

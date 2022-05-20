@@ -7,6 +7,9 @@ namespace Domain
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public bool Veggie { get; set; }
+        public bool LactoseFree { get; set; }
+        public bool GlutenFree { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string AppUserId { get; set; }
         public AppUser AppUser { get; set; }

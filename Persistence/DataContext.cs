@@ -13,12 +13,16 @@ IdentityRoleClaim<string>, IdentityUserToken<string>>
         {
 
         }
+        public DbSet<PreparationStep> PreparationSteps { get; set; }
         public DbSet<Photo> Photos { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<RecipeCooker> RecipeCookers { get; set; }
         public DbSet<RecipeIngredient> RecipeIngredients { get; set; }
         public DbSet<UserIngredient> UserIngredients { get; set; }
+        public DbSet<UserFollowing> UserFollowings { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -72,6 +76,25 @@ IdentityRoleClaim<string>, IdentityUserToken<string>>
             .HasOne(i => i.Ingredient)
             .WithMany(u => u.Users)
             .HasForeignKey(ui => ui.IngredientId);
+
+            builder.Entity<PreparationStep>(x => x.HasKey(aa => new { aa.StepNo, aa.RecipeId }));
+
+            builder.Entity<UserFollowing>(x => x.HasKey(uf => new { uf.OserverId, uf.TargetId }));
+
+            builder.Entity<UserFollowing>()
+            .HasOne(o => o.Observer)
+            .WithMany(f => f.Followings)
+            .HasForeignKey(o => o.OserverId);
+
+            builder.Entity<UserFollowing>()
+            .HasOne(t => t.Target)
+            .WithMany(f => f.Followers)
+            .HasForeignKey(t => t.TargetId);
+
+            builder.Entity<Comment>()
+            .HasOne(a => a.Recipe)
+            .WithMany(c => c.Comments)
+            .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

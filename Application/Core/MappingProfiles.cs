@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Application.Comments;
 using Application.Durations;
 using Application.Ingredients;
 using Application.Recipes;
@@ -17,7 +18,7 @@ namespace Application.Core
             .ForMember(d => d.OwnerUsername, o => o.MapFrom(s => s.Cookers.FirstOrDefault(x => x.IsOwner).AppUser.UserName))
             .ForMember(d => d.Image, o => o.MapFrom(s => s.Photos.FirstOrDefault(x => x.IsMain).Url))
             .ForMember(d => d.Duration, o => o.MapFrom(s => s.Duration));
-            CreateMap<RecipeCooker, Profiles.Profile>()
+            CreateMap<RecipeCooker, CookerDto>()
             .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.AppUser.DisplayName))
             .ForMember(d => d.Username, o => o.MapFrom(s => s.AppUser.UserName))
             .ForMember(d => d.Bio, o => o.MapFrom(s => s.AppUser.Bio));
@@ -31,7 +32,7 @@ namespace Application.Core
             .ForMember(d => d.CreatorId, o => o.MapFrom(s => s.AppUser.Id));
             CreateMap<AppUser, Profiles.Profile>()
             .ForMember(d => d.Image, o => o.MapFrom(s => s.Photos.FirstOrDefault(x => x.IsMain).Url));
-            CreateMap<TimeSpan,DurationDto>()
+            CreateMap<TimeSpan, DurationDto>()
             .ForMember(d => d.Ticks, o => o.MapFrom(s => s.Ticks))
             .ForMember(d => d.Days, o => o.MapFrom(s => s.Days))
             .ForMember(d => d.Hours, o => o.MapFrom(s => s.Hours))
@@ -43,6 +44,11 @@ namespace Application.Core
             .ForMember(d => d.TotalMinutes, o => o.MapFrom(s => s.TotalMinutes))
             .ForMember(d => d.TotalSeconds, o => o.MapFrom(s => s.TotalSeconds))
             .ForMember(d => d.TotalMilliseconds, o => o.MapFrom(s => s.TotalMilliseconds));
+            CreateMap<PreparationStep, PreparationStepDto>();
+            CreateMap<Comment, CommentDto>()
+            .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.Author.DisplayName))
+            .ForMember(d => d.Username, O => O.MapFrom(S => S.Author.UserName))
+            .ForMember(d => d.Image, o => o.MapFrom(s => s.Author.Photos.FirstOrDefault(x => x.IsMain).Url));
         }
     }
 }

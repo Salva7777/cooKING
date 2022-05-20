@@ -6,7 +6,7 @@ namespace API.Controllers
     public class PhotosController : BaseApiController
     {
         [HttpPost("{id?}")]
-        public async Task<IActionResult> Add([FromForm] IFormFile file, Guid ?id)
+        public async Task<IActionResult> Add([FromForm] IFormFile file, Guid? id)
         {
             return HandleResult(await Mediator.Send(new Add.Command { File = file, Id = id }));
         }
@@ -15,6 +15,12 @@ namespace API.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
+        }
+        
+        [HttpPost("{id}/setMain")]
+        public async Task<IActionResult> SetMain(string id)
+        {
+            return HandleResult(await Mediator.Send(new SetMain.Command { Id = id }));
         }
     }
 }
