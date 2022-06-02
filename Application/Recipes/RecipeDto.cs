@@ -18,6 +18,7 @@ namespace Application.Recipes
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string OwnerUsername { get; set; }
         public string Image { get; set; }
+        public ICollection<Photo> Photos { get; set; }
         public ICollection<CookerDto> Cookers { get; set; }
         public ICollection<RecipeIngredientDto> Ingredients { get; set; }
         public ICollection<PreparationStepDto> PreparationSteps { get; set; }

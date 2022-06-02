@@ -20,6 +20,14 @@ namespace API.SignalR
                 .SendAsync("ReceiveComment", comment.Value);
         }
 
+        public async Task DeleteComment(int id)
+        {
+            var comment = await _mediator.Send(new Delete.Command { Id = id });
+            //manda info para a client app
+            await Clients.Group("5d789102-4901-460a-a878-7dee3432ee6b")
+            .SendAsync("RemoveComment", id);
+        }
+
         public override async Task OnConnectedAsync()
         {
             var httpContext = Context.GetHttpContext();
@@ -29,5 +37,7 @@ namespace API.SignalR
             await Clients.Caller.SendAsync("LoadComments", result.Value);
 
         }
+
+
     }
 }

@@ -12,5 +12,6 @@ namespace API.Dtos
         public string Image { get; set; }
         public ICollection<IdentityRole> Roles { get; set; }
         public ICollection<IngredientDto> Ingredients { get; set; }
+        public ICollection<Photo> Photos { get; set; }
     }
 }

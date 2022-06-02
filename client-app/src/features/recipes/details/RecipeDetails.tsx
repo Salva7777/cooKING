@@ -1,10 +1,10 @@
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Button, Card, Grid, Icon, Image } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
-import { Recipe } from "../../../app/models/recipe";
 import { useStore } from "../../../app/stores/store";
+import RecipDetailedChat from "./RecipDetailedChat";
 import RecipDetailedInfo from "./RecipDetailedInfo";
 import RecipDetailedSidebar from "./RecipDetailedSidebar";
 import RecipeDetailedHeader from "./RecipeDetailedHeader";
@@ -29,7 +29,7 @@ export default observer(function RecipeDetails() {
             <Grid.Column width={10}>
                 <RecipeDetailedHeader recipe={recipe} />
                 <RecipDetailedInfo recipe={recipe} />
-                {/* <RecipDetailedChat recipeId={recipe.id} /> */}
+                <RecipDetailedChat recipe={recipe} />
             </Grid.Column>
             <Grid.Column width={6}>
                 <RecipDetailedSidebar recipe={recipe} />

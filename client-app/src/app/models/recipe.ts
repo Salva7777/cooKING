@@ -18,6 +18,11 @@ export interface Duration {
     totalSeconds: number | undefined;
 }
 
+export interface PreparationStep {
+    stepNo: number | null;
+    text: string;
+}
+
 export interface Recipe {
     id: string;
     title: string;
@@ -33,6 +38,11 @@ export interface Recipe {
     photos?: Photo[];
     cookers: Profile[];
     ingredients: Ingredient[];
+    preparationSteps: PreparationStep[];
+    isVeggie: boolean;
+    isLactoseFree: boolean;
+    isGlutenFree: boolean;
+
 }
 
 export class Recipe implements Recipe {
@@ -48,6 +58,7 @@ export class RecipeFormValues {
     description: string = '';
     duration: Duration | any = [];
     ingredients: Ingredient[] = [];
+    preparationSteps: PreparationStep[] = [];
     constructor(recipe?: RecipeFormValues) {
         if (recipe) {
             this.id = recipe.id;
@@ -55,6 +66,7 @@ export class RecipeFormValues {
             this.difficulty = recipe.difficulty;
             this.description = recipe.description;
             this.ingredients = recipe.ingredients;
+            this.preparationSteps = recipe.preparationSteps;
             this.duration[0] = recipe.duration[1];
             this.duration[1] = recipe.duration[2];
             this.duration[2] = recipe.duration[3];

@@ -15,6 +15,9 @@ export default class UserStore {
     get isLoggedIn() {
         return !!this.user;
     }
+    get isAdmin() {
+        return !!this.user?.roles.some(a => a.name === 'Admin');
+    }
 
     login = async (creds: UserFormValues) => {
         try {
@@ -22,7 +25,6 @@ export default class UserStore {
             const user = await agent.Account.login(creds);
             store.commonStore.setToken(user.token);
             runInAction(() => this.user = user);
-            console.log(user);
             store.modalStore.closeModal();
         } catch (error) {
             throw error;
@@ -54,5 +56,15 @@ export default class UserStore {
         } catch (error) {
             throw error;
         }
+    }
+
+    setImage = (url: string) => {
+        if (this.user) {
+            this.user.image = url;
+        }
+    }
+    setDisplayName = (name: string) => {
+        if (this.user)
+            this.user.displayName = name;
     }
 }

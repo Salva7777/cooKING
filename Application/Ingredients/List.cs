@@ -26,7 +26,7 @@ namespace Application.Ingredients
 
             public async Task<Result<List<IngredientDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var ingredients = await _context.Ingredients
+                var ingredients = await _context.Ingredients.Include(i => i.AppUser)
                 .ProjectTo<IngredientDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 

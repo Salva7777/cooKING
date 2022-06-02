@@ -9,14 +9,14 @@ interface Props {
     color: SemanticCOLORS | undefined;
     name: SemanticICONS | undefined;
     size: IconSizeProp | undefined;
-    clicked:boolean;
+    clicked: boolean;
 }
 
 export default function MyIcon(props: Props) {
     const [field, meta] = useField("" + props.name);
     return (
         <Form.Field error={meta.touched}>
-            <Icon {...props} onChange={field.onChange} onBlur={field.onBlur}></Icon>
+            <Icon link {...props} onChange={field.onChange} onBlur={field.onBlur}></Icon>
             {props.clicked ? !props.clicked : null}
         </Form.Field>
     )

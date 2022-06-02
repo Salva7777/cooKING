@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper.QueryableExtensions;
 using Persistence;
+using Application.Interfaces;
 
 namespace Application.Recipes
 {
@@ -22,8 +23,10 @@ namespace Application.Recipes
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
-            public Handler(DataContext context, IMapper mapper)
+            private readonly IUserAccessor _userAccessor;
+            public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
             {
+                _userAccessor = userAccessor;
                 _mapper = mapper;
                 _context = context;
             }
@@ -31,7 +34,7 @@ namespace Application.Recipes
             public async Task<Result<RecipeDto>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var recipe = await _context.Recipes
-                                .ProjectTo<RecipeDto>(_mapper.ConfigurationProvider)
+                                .ProjectTo<RecipeDto>(_mapper.ConfigurationProvider, new { currentUsername = _userAccessor.GetUsername() })
                                 .FirstOrDefaultAsync(x => x.Id == request.Id);
 
                 return Result<RecipeDto>.Success(recipe);

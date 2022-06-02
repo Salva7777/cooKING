@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Header, Icon, Image, Item, Segment, Transition } from "semantic-ui-react";
+import { Button, Container, Header, Icon, Image, Item, Label, Segment, Transition } from "semantic-ui-react";
 import { OutliningSpanKind } from "typescript";
 import { Recipe } from "../../../app/models/recipe";
 import { useStore } from "../../../app/stores/store";
@@ -32,7 +32,7 @@ export default observer(function RecipeDetailedHeader({ recipe }: Props) {
     return (
         <Segment.Group>
             <Segment basic attached='top' style={{ padding: '0' }}>
-                <Image src={recipe.image} fluid style={recipeImageStyle} />
+                <Image src={recipe.image || '/assets/recipe-image-placeholder.jpg'} fluid style={recipeImageStyle} />
                 <Segment style={recipeImageTextStyle} basic>
                     <Item.Group>
                         <Item>
@@ -50,9 +50,14 @@ export default observer(function RecipeDetailedHeader({ recipe }: Props) {
                                 {recipe.isOwner ? (
                                     <>
                                         <Button as={Link}
-                                            to={`/manage/${recipe.id}`}
+                                            to={`/managerecipe/${recipe.id}`}
                                             color='orange'>
                                             Manage Recipe
+                                        </Button>
+                                        <Button as={Link}
+                                            to={`/recipes/${recipe.id}/photos/`}
+                                            color='orange'>
+                                            Manage Photos
                                         </Button>
                                     </>
                                 ) : recipe.liked ? (
@@ -83,7 +88,14 @@ export default observer(function RecipeDetailedHeader({ recipe }: Props) {
                 </Segment>
             </Segment>
             <Segment clearing attached='bottom'>
-                {recipe.description}
+                <Container>
+                    {recipe.description}
+                    <br />
+                    <Header content='Cautions' />
+                    <Label tag color={recipe.isVeggie ? "green" : "red"}> Veggie </Label>
+                    <Label tag color={recipe.isGlutenFree ? "green" : "red"}> Gluten Free </Label>
+                    <Label tag color={recipe.isLactoseFree ? "green" : "red"}> Lactose Free </Label>
+                </Container>
             </Segment>
         </Segment.Group>
     )

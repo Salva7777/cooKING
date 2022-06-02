@@ -33,7 +33,11 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> login(LoginDto loginDto)
         {
-            var user = await _context.Users.Include(x => x.Ingredients).ThenInclude(x => x.Ingredient).AsNoTracking().Include(x => x.UserRoles).ThenInclude(x => x.Role).AsNoTracking().FirstOrDefaultAsync(x => x.Email == loginDto.Email);
+            var user = await _context.Users
+            .Include(x => x.Ingredients).ThenInclude(x => x.Ingredient).AsNoTracking()
+            .Include(x => x.UserRoles).ThenInclude(x => x.Role).AsNoTracking()
+            .Include(x => x.Photos)
+            .FirstOrDefaultAsync(x => x.Email == loginDto.Email);
 
             if (user == null) return Unauthorized("Invalid Email");
 
@@ -84,7 +88,11 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
-            var user = await _context.Users.Include(x => x.Ingredients).Include(x => x.UserRoles).ThenInclude(x => x.Role).FirstOrDefaultAsync(x => x.Email == User.FindFirstValue(ClaimTypes.Email));
+            var user = await _context.Users
+            .Include(x => x.Ingredients).ThenInclude(x => x.Ingredient)
+            .Include(x => x.UserRoles).ThenInclude(x => x.Role)
+            .Include(x => x.Photos)
+            .FirstOrDefaultAsync(x => x.Email == User.FindFirstValue(ClaimTypes.Email));
 
             return CreateUserObject(user);
         }
@@ -114,11 +122,12 @@ namespace API.Controllers
             return new UserDto
             {
                 DisplayName = user.DisplayName,
-                Image = null,
+                Image = user?.Photos?.FirstOrDefault(up => up.IsMain)?.Url,
                 Token = _tokenService.CreateToken(user),
                 Username = user.UserName,
                 Roles = rolesArray,
-                Ingredients = IngredientssArray
+                Ingredients = IngredientssArray,
+                Photos = user.Photos
             };
         }
     }

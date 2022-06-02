@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    public class FollowsController : BaseApiController
+    public class FollowController : BaseApiController
     {
         [HttpPost("{username}")]
         public async Task<ActionResult> ToggleFollow(string username)

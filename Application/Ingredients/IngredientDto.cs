@@ -11,5 +11,6 @@ namespace Application.Ingredients
         public bool GlutenFree { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string CreatorId { get; set; }
+        public string OwnerUsername { get; set; }
     }
 }

@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
+using Application.Core;
 
 namespace Application.Recipes
 {
-    public class RecipeParams
+    public class RecipeParams : PagingParams
     {
         public bool HasIngredients { get; set; }
 
         //receita com todos os seguintes ingredientes
         public ICollection<Guid> SelectedIngredients { get; set; }
+        public ICollection<String> Cautions { get; set; }
         public bool Liked { get; set; }
         public bool IsOwner { get; set; }
         public bool Veggie { get; set; }

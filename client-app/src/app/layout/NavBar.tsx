@@ -6,7 +6,7 @@ import LoginForm from '../../features/users/LoginForm';
 import { useStore } from '../stores/store';
 
 export default observer(function NavBar() {
-    const { modalStore, userStore: { user, logout, isLoggedIn } } = useStore();
+    const { modalStore, userStore: { user, logout, isLoggedIn, isAdmin } } = useStore();
     return (
         <Menu inverted fixed='top'>
             <Container>
@@ -15,22 +15,32 @@ export default observer(function NavBar() {
                     COOKING
                 </Menu.Item>
                 <Menu.Item as={Link} to='/recipes' name='Recipes' />
-                <Menu.Item>
-                    <Button disabled={!isLoggedIn}
-                    as={Link} color='black' to='/createrecipe' content='Create Recipe' />
+                <Menu.Item as={Link} to='/ingredients' name='Ingredients' />
+                <Menu.Item >
+                    <Dropdown disabled={!isLoggedIn} simple text={'Create'}>
+                        <Dropdown.Menu>
+                            <Dropdown.Item as={Link} to='/createrecipe'
+                                text='Recipe' icon='file text' />
+                            <Dropdown.Item as={Link} to='/createingredient'
+                                text='Ingredient' icon='lemon' />
+                        </Dropdown.Menu>
+                    </Dropdown>
                 </Menu.Item>
-                {isLoggedIn ?
-                    <Menu.Item position='right'>
+                {isLoggedIn ? <>
+                    {isAdmin &&
+                        < Menu.Item as={Link} to='/admin' name='Admin Dashboard' position='right' />}
+                    <Menu.Item position='right' >
                         <Image src={user?.image || '/assets/user.png'} avatar spaced='right' />
                         <Dropdown pointing='top left' text={user?.displayName}>
                             <Dropdown.Menu>
-                                <Dropdown.Item as={Link} to={`/profile/${user?.username}`}
+                                <Dropdown.Item as={Link} to={`/profiles/${user?.username}`}
                                     text='My Profile' icon='user' />
                                 <Dropdown.Item onClick={logout} text='Logout' icon='power' />
                             </Dropdown.Menu>
                         </Dropdown>
-                    </Menu.Item>
-                    : <Menu.Item onClick={() => modalStore.openModal(<LoginForm />)} position='right' name='Login'></Menu.Item>}
+                    </Menu.Item> </>
+                    : <Menu.Item onClick={() => modalStore.openModal(<LoginForm />)} position='right' name='Login'></Menu.Item>
+                }
             </Container>
         </Menu>
     )

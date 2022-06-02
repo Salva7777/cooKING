@@ -68,30 +68,35 @@ namespace Application.Recipes
                     if (!request.Recipe.Ingredients.Any(x => x.IngredientId == existingIngredient.IngredientId))
                         recipe.Ingredients.Remove(existingIngredient);
                 }
-                for (int i = 0; i != request.Recipe.PreparationSteps.Count(); i++)
+                if (request.Recipe.PreparationSteps != null)
                 {
-                    var previewStep = request.Recipe.PreparationSteps.ToList()[i];
-                    request.Recipe.PreparationSteps.FirstOrDefault(x => request.Recipe.PreparationSteps.ToList()[i] == x).StepNo = i;
-                    var realStep = recipe.PreparationSteps.FirstOrDefault(x => x.StepNo == i);
-                    if (realStep != null)
+
+
+                    for (int i = 0; i != request.Recipe.PreparationSteps.Count(); i++)
                     {
-                        realStep.Text = previewStep.Text;
-                    }
-                    else
-                    {
-                        var newStep = new PreparationStep
+                        var previewStep = request.Recipe.PreparationSteps.ToList()[i];
+                        request.Recipe.PreparationSteps.FirstOrDefault(x => request.Recipe.PreparationSteps.ToList()[i] == x).StepNo = i;
+                        var realStep = recipe.PreparationSteps.FirstOrDefault(x => x.StepNo == i);
+                        if (realStep != null)
                         {
-                            StepNo = i,
-                            Text = previewStep.Text,
-                        };
-                        recipe.PreparationSteps.Add(newStep);
+                            realStep.Text = previewStep.Text;
+                        }
+                        else
+                        {
+                            var newStep = new PreparationStep
+                            {
+                                StepNo = i,
+                                Text = previewStep.Text,
+                            };
+                            recipe.PreparationSteps.Add(newStep);
+                        }
                     }
-                }
-                foreach (var existingStep in recipe.PreparationSteps.ToList())
-                {
-                    if (existingStep.StepNo >= request.Recipe.PreparationSteps.Count())
+                    foreach (var existingStep in recipe.PreparationSteps.ToList())
                     {
-                        _context.PreparationSteps.Remove(existingStep);
+                        if (existingStep.StepNo >= request.Recipe.PreparationSteps.Count())
+                        {
+                            _context.PreparationSteps.Remove(existingStep);
+                        }
                     }
                 }
                 _mapper.Map(request.Recipe, recipe);

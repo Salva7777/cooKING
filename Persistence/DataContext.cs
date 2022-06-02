@@ -27,17 +27,27 @@ IdentityRoleClaim<string>, IdentityUserToken<string>>
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<Recipe>()
+            .HasMany(r => r.Cookers)
+            .WithOne(c => c.Recipe)
+            .HasForeignKey(c => c.RecipeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<RecipeCooker>(x => x.HasKey(aa => new { aa.AppUserId, aa.RecipeId }));
 
             builder.Entity<RecipeCooker>()
             .HasOne(u => u.Recipe)
             .WithMany(a => a.Cookers)
-            .HasForeignKey(aa => aa.RecipeId);
+            .HasForeignKey(aa => aa.RecipeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
 
             builder.Entity<RecipeCooker>()
             .HasOne(u => u.AppUser)
             .WithMany(a => a.Recipes)
-            .HasForeignKey(aa => aa.AppUserId);
+            .HasForeignKey(aa => aa.AppUserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
 
             builder.Entity<RecipeIngredient>(x => x.HasKey(aa => new { aa.IngredientId, aa.RecipeId }));
